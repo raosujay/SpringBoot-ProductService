@@ -41,8 +41,8 @@ public class ProductController {
 //        return new ResponseEntity<>(product, HttpStatus.OK);
 //    }
 
-    //Here we are returning with ProductResponseSelf Dto
-    @GetMapping("/products/{id}")
+    //Here we are returning with ProductResponseSelf Dto & using old try nd catch block
+    @GetMapping("/product/{id}")
     public ResponseEntity<ProductResponseSelf> getSingleProduct(@PathVariable("id") Long id) {
         Product product;
         try {
@@ -56,6 +56,28 @@ public class ProductController {
         }
         return new ResponseEntity<>(new ProductResponseSelf(product,"Success"), HttpStatus.OK);
     }
+
+    //Here we are returning with ProductResponseSelf Dto & ExceptionHandler
+    @GetMapping("/product/exception/{id}")
+    public ResponseEntity<ProductResponseSelf> getSingleProductException(@PathVariable("id") Long id)
+            throws ProductNotPresentException {
+        Product product = productService.getSingleProduct(id);
+        return new ResponseEntity<>(new ProductResponseSelf(product,"Success"), HttpStatus.OK);
+    }
+
+//    Using exception handler to catch the errors and throw exceptions
+//    We are moving this to ProductControllerAdvice as we want to handle this globally & keep controller clean
+//    If we write exception here it'll be having more preference over ControllerAdvice
+//    @ExceptionHandler(ProductNotPresentException.class)
+//    public ResponseEntity<ProductResponseSelf> handleInvalidProduct() {
+//        ProductResponseSelf productResponseSelf = new ProductResponseSelf(null, "Product doesn't exist");
+//        return new ResponseEntity<>(productResponseSelf, HttpStatus.NOT_FOUND);
+//    }
+//    @ExceptionHandler(ArithmeticException.class)
+//    public ResponseEntity<ProductResponseSelf> handleArithematicException() {
+//        ProductResponseSelf productResponseSelf = new ProductResponseSelf(null, "Something Went Wrong");
+//        return new ResponseEntity<>(productResponseSelf, HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 
     @GetMapping("/products/categories")
     public List<Category> getAllCategories() {
